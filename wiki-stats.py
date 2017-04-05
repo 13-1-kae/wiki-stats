@@ -13,6 +13,8 @@ from matplotlib import rc
 rc('font', family='Droid Sans', weight='normal', size=14)
 
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 
 class WikiGraph:
@@ -79,6 +81,13 @@ class WikiGraph:
 
 def hist(fname, data, bins, xlabel, ylabel, title, facecolor='green', alpha=0.5, transparent=True, **kwargs):
     plt.clf()
+    p=plt.hist(data, bins, facecolor, alpha)
+    plt.xlabel=xlabel
+    plt.ylable=ylabel
+    plt.title=title
+    plt.grid(transparent)
+    plt.show()
+    p.savefig(fname)
     # TODO: нарисовать гистограмму и сохранить в файл
 
 
@@ -86,5 +95,68 @@ if __name__ == '__main__':
 
    wg=WikiGraph()
    wg.load_from_file('wiki_small.txt')
+   k=0
+   for x in wg._redirect:
+       if x==1:
+           k+=1
+   print('Количество статей с перенаправлением:', k)
+   k1=1000000000
+   k2=0
+   for i in range (len(wg._offset)-1):
+       if wg._offset[i+1]-wg._offset[i]==k1:
+           k2+=1
+       if wg._offset[i+1]-wg._offset[i]<k1:
+           k1=wg._offset[i+1]-wg._offset[i]
+           k2=0
+   print('Mинимальное количество ссылок из статьи:', k1)
+   print('Kоличество статей с минимальным количеством ссылок:', k2)
+   k3=0
+   k4=0
+   k5=-1
+   for i in range(len(wg._offset) - 1):
+       if wg._offset[i + 1] - wg._offset[i] == k3:
+           k4 += 1
+       if wg._offset[i + 1] - wg._offset[i] > k1:
+           k1 = wg._offset[i + 1] - wg._offset[i]
+           k4 = 0
+           k5=i+1
+   print('Mаксимальное количество ссылок из статьи:',k3)
+   print('Kоличество статей с максимальным количеством ссылок:', k4)
+   print('Cтатья с наибольшим количеством ссылок:', wg._titles[k5])
+   l=len(wg._offset)
+   k6=wg._offset[l]/l
+   print('Cреднее количество ссылок в статье:', k6)
+   lst=[]*len(wg._links)
+   for x in wg._links:
+       lst[x]+=1
+   min=1000000000
+   k7=-1
+   k8=0
+   for i in range(len(lst)):
+       if lst[i]==min:
+           k8+=1
+       if lst[i]<min:
+           min=lst[i]
+           k7=i
+           k8=0
+   print('Минимальное количество ссылок на статью:', min)
+   print('Kоличество статей с минимальным количеством внешних ссылок:', k8)
+   max=-1
+   k9=-1
+   k10=0
+   for i in range(len(lst)):
+       if lst[i]==max:
+           k10+=1
+       if lst[i]>max:
+           max=lst[i]
+           k9=i
+           k10=0
+   print('Mаксимальное количество ссылок на статью:', max)
+   print('Kоличество статей с максимальным количеством внешних ссылок:', k10)
+   print('Cтатья с наибольшим количеством внешних ссылок:', wg._titles[k9])
+   s=0
+   for i in range(len(lst)): s+=lst[i]
+   k11=s/len(lst)
+   print('Cреднее количество внешних ссылок на статью:', k11)
 
-    # TODO: статистика и гистограммы
+
